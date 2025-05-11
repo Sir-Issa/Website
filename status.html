@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Status Timeline - mc.sirissa.dev</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: sans-serif;
+      margin: 0;
+      padding-top: 60px;
+    }
+
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .container {
+      padding: 2rem;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .entry {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background-color: #1e1e1e;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(255,255,255,0.1);
+    }
+
+    .bar {
+      display: flex;
+      gap: 2px;
+    }
+
+    .block {
+      width: 6px;
+      height: 20px;
+      border-radius: 2px;
+      background-color: #555;
+    }
+
+    .block.online {
+      background-color: #4caf50;
+    }
+
+    .block.offline {
+      background-color: #f44336;
+    }
+
+    .block.error {
+      background-color: #ffeb3b;
+    }
+
+    .info {
+      text-align: right;
+      font-size: 0.85rem;
+      color: #ccc;
+    }
+
+    .info strong {
+      display: block;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a href="index.html">← Back</a>
+  </header>
+
+  <div class="container">
+    <h1>Status Timeline <span style="font-size: 1rem; color: #aaa;">(mc.sirissa.dev)</span></h1>
+    <div id="timeline" class="timeline"></div>
+  </div>
+
+  <script>
+    const timeline = document.getElementById("timeline");
+    const totalBlocks = 30; // total visual bars
+
+    function formatTime(date) {
+      return date.toLocaleTimeString() + ' – ' + date.toLocaleDateString();
+    }
+
+    function addBarEntry(statusType, label, percent = 100) {
+      const entry = document.createElement("div");
+      entry.className = "entry";
+
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      const filledBlocks = Math.round((percent / 100) * totalBlocks);
+
+      for (let i = 0; i < totalBlocks; i++) {
+        const block = document.createElement("div");
+        block.className = "block";
+        if (i < filledBlocks) block.classList.add(statusType);
+        bar.appendChild(block);
+      }
+
+      const info = document.createElement("div");
+      info.className = "info";
+      info.innerHTML = `<strong>${label}</strong>${formatTime(new Date())}`;
+
+      entry.appendChild(bar);
+      entry.appendChild(info);
+      timeline.prepend(entry);
+    }
+
+    function checkStatus() {
+      fetch("https://mcsrvstat.us/server/mc.sirissa.dev")
+        .then(res => res.json())
+        .then(data => {
+          if (data.online) {
+            const players = data.players?.online || 0;
+            const max = data.players?.max || 1;
+            const percent = (players / max) * 100;
+            addBarEntry("online", `Online: ${players}/${max}`, percent);
+          } else {
+            addBarEntry("offline", "Offline", 0);
+          }
+        })
+        .catch(() => {
+          addBarEntry("error", "Error", 50);
+        });
+    }
+
+    checkStatus();
+    setInterval(checkStatus, 30 * 1000); // every 30 seconds
+  </script>
+</body>
+</html>

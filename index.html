@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sir Issa | Developer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="background-genetics" id="genetics-container"></div>
+
+  <header class="navbar">
+    <img src="logo.png" alt="Home" class="home-logo" onclick="scrollToSection('home')">
+    <nav>
+      <ul>
+        <li><a href="#about" data-target="about">About</a></li>
+        <li><a href="#projects" data-target="projects">Projects</a></li>
+        <li><a href="status.html">Status</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="home" class="container">
+    <h1>Welcome! <span class="emoji"></span></h1>
+    <p class="intro"> Dev <span class="highlight">Sir Issa</span>,</p>
+    <p class="intro">A developer who insipres to be someone known.</p>
+  </section>
+
+  <section id="about" class="container">
+    <h1>About Me</h1>
+    <p>currently working on it 3> </p>
+  </section>
+
+  <section id="projects" class="container">
+    <h1>Projects</h1>
+    <p>currently working on this website as a first project, still trying to settle on a logo for the website,<br> and im trying to do art while doing this so  pretty sure ill fail at both but whatever 3>. <br><br><br> Ive been working on creating a website that will let you upload long videos to discord <br>without having the limit that discord gives you <br><a href="upload.sirissa.dev" target="_blank" rel="noopener noreferrer">upload.sirissa.dev</a></p>
+  </section>
+
+  <script>
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('a[data-target]').forEach(link => {
+      link.addEventListener('click', function(event) {
+        event.preventDefault();
+        scrollToSection(this.getAttribute('data-target'));
+      });
+    });
+
+    // Background genetics animation
+    const container = document.getElementById('genetics-container');
+    const numberOfGenetics = 150;
+
+    for (let i = 0; i < numberOfGenetics; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'genetic-dot';
+      dot.style.top = `${Math.random() * 100}%`;
+      dot.style.left = `${Math.random() * 100}%`;
+      dot.style.animationDuration = `${5 + Math.random() * 5}s`;
+      container.appendChild(dot);
+    }
+  </script>
+</body>
+</html>
